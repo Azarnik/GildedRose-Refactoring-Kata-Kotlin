@@ -5,9 +5,6 @@ import com.gildedrose.Item
 sealed class GlidedRoseItem(private var item: Item) {
     protected open val maxQuality = 50
 
-    val name
-        get() = item.sellIn
-
     var sellIn: Int
         get() = item.sellIn
         protected set(value) {
@@ -32,6 +29,8 @@ sealed class GlidedRoseItem(private var item: Item) {
     protected open fun updateSellIn() {
         sellIn--
     }
+
+    override fun toString() = item.toString()
 }
 
 internal class RegularItem(item: Item) : GlidedRoseItem(item)
@@ -59,11 +58,18 @@ internal class BackstagePasses(item: Item) : GlidedRoseItem(item) {
     }
 }
 
+internal class Conjured(item: Item) : GlidedRoseItem(item) {
+    override fun updateQuality() {
+        quality -= if (sellIn <= 0) 4 else 2
+    }
+}
+
 internal fun Item.toGlidedRoseItem(): GlidedRoseItem {
     return when (name) {
         AGED_BRIE -> AgedBrie(this)
         SULFURAS -> Sulfuras(this)
         BACKSTAGE_PASSES -> BackstagePasses(this)
+        CONJURED -> Conjured(this)
         else -> RegularItem(this)
     }
 }
@@ -71,3 +77,4 @@ internal fun Item.toGlidedRoseItem(): GlidedRoseItem {
 private const val AGED_BRIE = "Aged Brie"
 private const val SULFURAS = "Sulfuras, Hand of Ragnaros"
 private const val BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert"
+private const val CONJURED = "Conjured Mana Cake"

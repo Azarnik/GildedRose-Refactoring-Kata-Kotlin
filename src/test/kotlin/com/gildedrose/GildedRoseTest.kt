@@ -15,7 +15,8 @@ internal class GildedRoseTest {
                     "Sulfuras, Hand of Ragnaros, -1, 80\n" +
                     "Backstage passes to a TAFKAL80ETC concert, 14, 21\n" +
                     "Backstage passes to a TAFKAL80ETC concert, 9, 50\n" +
-                    "Backstage passes to a TAFKAL80ETC concert, 4, 50"
+                    "Backstage passes to a TAFKAL80ETC concert, 4, 50\n" +
+                    "Conjured Mana Cake, 2, 8"
         )
     }
 
@@ -29,7 +30,8 @@ internal class GildedRoseTest {
                     "Sulfuras, Hand of Ragnaros, -1, 80\n" +
                     "Backstage passes to a TAFKAL80ETC concert, 13, 22\n" +
                     "Backstage passes to a TAFKAL80ETC concert, 8, 50\n" +
-                    "Backstage passes to a TAFKAL80ETC concert, 3, 50"
+                    "Backstage passes to a TAFKAL80ETC concert, 3, 50\n" +
+                    "Conjured Mana Cake, 1, 6"
         )
     }
 
@@ -43,7 +45,8 @@ internal class GildedRoseTest {
                     "Sulfuras, Hand of Ragnaros, -1, 80\n" +
                     "Backstage passes to a TAFKAL80ETC concert, 9, 27\n" +
                     "Backstage passes to a TAFKAL80ETC concert, 4, 50\n" +
-                    "Backstage passes to a TAFKAL80ETC concert, -1, 0"
+                    "Backstage passes to a TAFKAL80ETC concert, -1, 0\n" +
+                    "Conjured Mana Cake, -3, 0"
         )
     }
 
@@ -184,6 +187,30 @@ internal class GildedRoseTest {
         item.assertEquals(expectedQuality = 0)
     }
 
+    @Test
+    fun `Conjured item quality decreases by 2`() {
+        val item = Item(CONJURED, 5, 20)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 18)
+    }
+
+    @Test
+    fun `Conjured item quality decreases by 4 when sellIn is 0 or less`() {
+        val item = Item(CONJURED, 0, 20)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 16)
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 12)
+    }
+
     private fun Item.assertEquals(
         expectedName: String? = null,
         expectedSellIn: Int? = null,
@@ -204,8 +231,7 @@ internal class GildedRoseTest {
             Item("Backstage passes to a TAFKAL80ETC concert", 15, 20),
             Item("Backstage passes to a TAFKAL80ETC concert", 10, 49),
             Item("Backstage passes to a TAFKAL80ETC concert", 5, 49),
-            // this conjured item does not work properly yet
-//            Item("Conjured Mana Cake", 3, 6)
+            Item("Conjured Mana Cake", 3, 10)
         )
     }
 }
@@ -213,3 +239,4 @@ internal class GildedRoseTest {
 private const val AGED_BRIE = "Aged Brie"
 private const val SULFURAS = "Sulfuras, Hand of Ragnaros"
 private const val BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert"
+private const val CONJURED = "Conjured Mana Cake"
