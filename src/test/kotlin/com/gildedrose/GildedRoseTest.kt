@@ -141,7 +141,7 @@ internal class GildedRoseTest {
 
 
     @Test
-    fun `Backstage passes quality increases by 2 when sellIn is 5 or less`() {
+    fun `Backstage passes quality increases by 2 when sellIn is 10 or less`() {
         val item = Item(BACKSTAGE_PASSES, 10, 20)
         val app = GildedRose(arrayOf(item))
 
