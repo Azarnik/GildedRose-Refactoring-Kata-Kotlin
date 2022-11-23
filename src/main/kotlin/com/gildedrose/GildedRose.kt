@@ -1,8 +1,18 @@
 package com.gildedrose
 
+import com.gildedrose.model.toGlidedRoseItem
+
 class GildedRose(var items: Array<Item>) {
 
     fun updateQuality() {
+        newUpdateQuality()
+    }
+
+    private fun newUpdateQuality() {
+        items.map { it.toGlidedRoseItem() }.forEach { it.nextDay() }
+    }
+
+    private fun oldUpdateQuality() {
         for (i in items.indices) {
             if (items[i].name != "Aged Brie" && items[i].name != "Backstage passes to a TAFKAL80ETC concert") {
                 if (items[i].quality > 0) {
@@ -53,6 +63,4 @@ class GildedRose(var items: Array<Item>) {
             }
         }
     }
-
 }
-
