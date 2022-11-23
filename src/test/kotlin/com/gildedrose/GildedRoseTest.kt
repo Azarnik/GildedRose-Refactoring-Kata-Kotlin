@@ -61,6 +61,125 @@ internal class GildedRoseTest {
 
     }
 
+    @Test
+    fun `regular item should decrease sellIn and quality each day`() {
+        val item = Item("Regular item", 5, 20)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedSellIn = 4)
+        item.assertEquals(expectedQuality = 19)
+
+        app.updateQuality()
+
+        item.assertEquals(expectedSellIn = 3)
+        item.assertEquals(expectedQuality = 18)
+    }
+
+    @Test
+    fun `quality degrades by 2 when the sell by date has passed`() {
+        val item = Item("Regular item", 0, 20)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedSellIn = -1)
+        item.assertEquals(expectedQuality = 18)
+    }
+
+    @Test
+    fun `quality should not be negative`() {
+        val item = Item("Regular item", 5, 0)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        assert(item.quality >= 0)
+    }
+
+    @Test
+    fun `Aged Brie quality increases over time`() {
+        val quality = 0
+        val item = Item(AGED_BRIE, 5, quality)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        assert(item.quality > quality)
+    }
+
+    @Test
+    fun `quality can not be more then 50`() {
+        val item = Item(AGED_BRIE, 5, 50)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        assert(item.quality <= 50)
+    }
+
+    @Test
+    fun `Sulfuras, Hand of Ragnaros never changes quality and sellIn`() {
+        val item = Item(SULFURAS, 5, 50)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedSellIn = 5, expectedQuality = 50)
+    }
+
+    @Test
+    fun `Backstage passes quality increases by 1 when sellIn is more then 10`() {
+        val item = Item(BACKSTAGE_PASSES, 15, 20)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 21)
+    }
+
+
+    @Test
+    fun `Backstage passes quality increases by 2 when sellIn is 5 or less`() {
+        val item = Item(BACKSTAGE_PASSES, 10, 20)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 22)
+    }
+
+    @Test
+    fun `Backstage passes quality increases by 3 when sellIn is 5 or less`() {
+        val item = Item(BACKSTAGE_PASSES, 5, 20)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 23)
+    }
+
+    @Test
+    fun `Backstage passes quality is 0 when the sellIn is 0`() {
+        val item = Item(BACKSTAGE_PASSES, 0, 20)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 0)
+    }
+
+    private fun Item.assertEquals(
+        expectedName: String? = null,
+        expectedSellIn: Int? = null,
+        expectedQuality: Int? = null
+    ) {
+        expectedName?.let { assertEquals(it, this.name) }
+        expectedSellIn?.let { assertEquals(it, sellIn) }
+        expectedQuality?.let { assertEquals(it, quality) }
+    }
+
     private fun mockItems(): Array<Item> {
         return arrayOf(
             Item("+5 Dexterity Vest", 10, 20), //
@@ -76,3 +195,7 @@ internal class GildedRoseTest {
         )
     }
 }
+
+private const val AGED_BRIE = "Aged Brie"
+private const val SULFURAS = "Sulfuras, Hand of Ragnaros"
+private const val BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert"
