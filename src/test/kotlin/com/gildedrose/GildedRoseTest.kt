@@ -110,6 +110,20 @@ internal class GildedRoseTest {
     }
 
     @Test
+    fun `Aged Brie quality increases by 2 when sellIn is 0 or less`() {
+        val item = Item(AGED_BRIE, 0, 0)
+        val app = GildedRose(arrayOf(item))
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 2)
+
+        app.updateQuality()
+
+        item.assertEquals(expectedQuality = 4)
+    }
+
+    @Test
     fun `quality can not be more then 50`() {
         val item = Item(AGED_BRIE, 5, 50)
         val app = GildedRose(arrayOf(item))

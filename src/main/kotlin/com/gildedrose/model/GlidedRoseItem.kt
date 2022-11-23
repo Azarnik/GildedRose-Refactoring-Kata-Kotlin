@@ -26,7 +26,7 @@ internal class RegularItem(item: Item) : GlidedRoseItem(item)
 
 internal class AgedBrie(item: Item) : GlidedRoseItem(item) {
     override fun updateQuality() {
-        setQuality(item.quality + 1)
+        setQuality(item.quality + if (item.sellIn <= 0) 2 else 1)
     }
 }
 
@@ -60,4 +60,3 @@ internal fun Item.toGlidedRoseItem(): GlidedRoseItem {
 private const val AGED_BRIE = "Aged Brie"
 private const val SULFURAS = "Sulfuras, Hand of Ragnaros"
 private const val BACKSTAGE_PASSES = "Backstage passes to a TAFKAL80ETC concert"
-
