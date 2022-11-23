@@ -2,23 +2,35 @@ package com.gildedrose.model
 
 import com.gildedrose.Item
 
-abstract class GlidedRoseItem(var item: Item) {
+sealed class GlidedRoseItem(private var item: Item) {
+    protected open val maxQuality = 50
+
+    val name
+        get() = item.sellIn
+
+    var sellIn: Int
+        get() = item.sellIn
+        protected set(value) {
+            item.sellIn = value
+        }
+
+    var quality: Int
+        get() = item.quality
+        protected set(value) {
+            item.quality = value.coerceIn(0, maxQuality)
+        }
+
     fun nextDay() {
         updateQuality()
         updateSellIn()
     }
 
     protected open fun updateQuality() {
-        val decreaseFor = if (item.sellIn <= 0) 2 else 1
-        setQuality(item.quality - decreaseFor)
+        quality -= if (sellIn <= 0) 2 else 1
     }
 
     protected open fun updateSellIn() {
-        item.sellIn--
-    }
-
-    protected fun setQuality(value: Int) {
-        item.quality = value.coerceIn(0, 50)
+        sellIn--
     }
 }
 
@@ -26,7 +38,7 @@ internal class RegularItem(item: Item) : GlidedRoseItem(item)
 
 internal class AgedBrie(item: Item) : GlidedRoseItem(item) {
     override fun updateQuality() {
-        setQuality(item.quality + if (item.sellIn <= 0) 2 else 1)
+        quality += if (sellIn <= 0) 2 else 1
     }
 }
 
@@ -38,13 +50,12 @@ internal class Sulfuras(item: Item) : GlidedRoseItem(item) {
 
 internal class BackstagePasses(item: Item) : GlidedRoseItem(item) {
     override fun updateQuality() {
-        val value = when (item.sellIn) {
-            in 11..Int.MAX_VALUE -> item.quality + 1
-            in 6..10 -> item.quality + 2
-            in 1..5 -> item.quality + 3
-            else -> 0
+        val value = when (sellIn) {
+            in 6..10 -> quality + 2
+            in 1..5 -> quality + 3
+            else -> if (sellIn <= 0) 0 else quality + 1
         }
-        setQuality(value)
+        quality = value
     }
 }
 
