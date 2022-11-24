@@ -2,7 +2,7 @@ package com.gildedrose.model
 
 import com.gildedrose.Item
 
-sealed class GlidedRoseItem(private var item: Item) {
+sealed class GlidedRoseItem(private val item: Item) {
     protected open val maxQuality = 50
 
     var sellIn: Int
@@ -22,9 +22,7 @@ sealed class GlidedRoseItem(private var item: Item) {
         updateSellIn()
     }
 
-    protected open fun updateQuality() {
-        quality -= if (sellIn <= 0) 2 else 1
-    }
+    protected abstract fun updateQuality()
 
     protected open fun updateSellIn() {
         sellIn--
@@ -33,7 +31,11 @@ sealed class GlidedRoseItem(private var item: Item) {
     override fun toString() = item.toString()
 }
 
-internal class RegularItem(item: Item) : GlidedRoseItem(item)
+internal class RegularItem(item: Item) : GlidedRoseItem(item) {
+    override fun updateQuality() {
+        quality -= if (sellIn <= 0) 2 else 1
+    }
+}
 
 internal class AgedBrie(item: Item) : GlidedRoseItem(item) {
     override fun updateQuality() {
@@ -42,6 +44,8 @@ internal class AgedBrie(item: Item) : GlidedRoseItem(item) {
 }
 
 internal class Sulfuras(item: Item) : GlidedRoseItem(item) {
+    override val maxQuality = 80
+
     override fun updateQuality() {}
 
     override fun updateSellIn() {}
